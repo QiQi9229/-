@@ -1,0 +1,49 @@
+from pypinyin import lazy_pinyin
+import requests
+from lxml import etree
+
+city = input("请输入城市名称：")
+# 将汉语转换为拼音
+list = lazy_pinyin(city,style=0)
+# 将拼音连接起来，组成城市拼音名
+link = ''.join(list)
+
+url = "https://www.tianqi.com/{}/".format(link)
+headers = {
+    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 Edg/88.0.705.68"
+}
+r = requests.get(url,headers=headers).text
+# 解析
+html = etree.HTML(r)
+# 城市名称
+name = html.xpath('//dd[@class="name"]/h2/text()')[0]
+# 时间日期
+date = html.xpath('//dd[@class="week"]/text()')[0]
+# 天气
+weather = html.xpath('//dd[@class="weather"]//span/b/text()')[0]
+# 全天气温
+temperature = html.xpath('//dd[@class="weather"]//span/text()')[0]
+# 现在温度
+now_temperature = html.xpath('//p[@class="now"]/b/text()')[0]
+# 其他信息
+others = html.xpath('//dd[@class="shidu"]//b/text()')
+# 连接其他信息
+others = ''.join(others)
+# 空气质量
+air = html.xpath('//dd[@class="kongqi"]/h5/text()')[0]
+# PM值
+PM = html.xpath('//dd[@class="kongqi"]/h6/text()')[0]
+# 只取值
+PM = PM.split(":")[-1]
+# 去空格
+PM = PM.strip()
+# 日出日落
+updown = html.xpath('//dd[@class="kongqi"]//span/text()')
+updown = '，'.join(updown)
+
+# 打印
+print(name,date)
+print(f'{weather},{now_temperature}℃,全天温度{temperature}')
+print(others)
+print(air,"PM2.5:",PM)
+print(updown)
