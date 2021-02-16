@@ -1,0 +1,34 @@
+import requests
+from lxml import etree
+import json
+
+url = "https://www.ximalaya.com/xiangsheng/9723091/"
+headers = {
+    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 Edg/88.0.705.68"
+}
+r = requests.get(url,headers=headers).text
+html = etree.HTML(r)
+total_page = html.xpath('//a[@class="page-link WJ_"]//text()')[-1]
+total_page = int(total_page)
+for i in range(1,total_page+1):
+    if i == 1:
+        url = url
+    else:
+        url = "https://www.ximalaya.com/xiangsheng/9723091/p{}/".format(i)
+    r = requests.get(url, headers=headers).text
+    html = etree.HTML(r)
+    # 名称
+    title = html.xpath('//div[@class="text lF_"]/a/@title')
+    id = html.xpath('//div[@class="text lF_"]/a/@href')
+    id = [id.split('/')[-1] for id in id]
+    for u,v in zip(title,id):
+        base_url = "https://www.ximalaya.com/revision/play/v1/audio?id={}&ptype=1".format(v)
+        r = requests.get(base_url,headers=headers).text
+        # json进行转换
+        dict1 = json.loads(r)
+        urls = dict1['data']['src']
+        Xiangsheng = requests.get(urls,headers=headers).content
+        path = f"./相声/{title}.m4a" 
+        with open(path,'wb') as f:
+            f.write(Xiangsheng)
+            print(title,"下载成功！")
