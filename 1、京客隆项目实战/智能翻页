@@ -1,0 +1,16 @@
+import requests
+from lxml import etree
+import os
+import re
+
+url = "http://jkl.com.cn/cn/invest.aspx?id=888"
+headers = {
+    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 Edg/88.0.705.68"
+}
+r = requests.get(url,headers = headers).text
+html = etree.HTML(r)
+last = html.xpath("//a[text()='尾页']/@href")
+if last != [ ]:
+    page = re.search("(\d+)'\)",last[0]).group(1)
+else:
+    page = 1
