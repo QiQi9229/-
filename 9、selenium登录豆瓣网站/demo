@@ -1,0 +1,27 @@
+from selenium import webdriver
+import time
+
+
+
+url = "https://accounts.douban.com/passport/login?source=main"
+
+driver = webdriver.Chrome()
+# 浏览器最大化显示
+driver.maximize_window()
+driver.get("https://www.douban.com/")
+time.sleep(3)
+
+iframe = driver.find_element_by_tag_name('iframe')
+# 窗口切换,切换到iframe子网页
+driver.switch_to.frame(iframe)
+# 点击密码登录
+driver.find_element_by_class_name("account-tab-account").click()
+
+# 用户输入
+driver.find_element_by_id("username").send_keys("13129597923")
+driver.find_element_by_id("password").send_keys("munian123")
+
+# 点击登录豆瓣
+driver.find_element_by_css_selector(".account-form-field-submit>.btn").click()
+time.sleep(5)
+driver.quit()
