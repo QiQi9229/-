@@ -1,0 +1,30 @@
+import requests
+import json
+import pandas as pd
+
+print("======如果退出请输入0并按回车======")
+while True:
+    a = input("输入想要翻译的内容：")
+    
+    if a=='0':
+        break
+    else:
+        url = " http://fanyi.youdao.com/translate?smartresult=dict&smartresult=rule"
+        headers = {
+            'User-Agent':"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 Edg/88.0.705.68"
+        }
+        data = { }
+        data['i'] = a
+        data['doctype'] = 'json'
+        data['from'] = 'AUTO'
+        data['to'] = 'AUTO'
+        data['client'] = 'fanyideskweb'
+        response = requests.post(url,headers=headers,data=data).text
+        # 字符串转换为字典
+        dict1 = json.loads(response)
+        result = dict1['translateResult'][0][0]['tgt']
+        # print(result)
+        
+        # 将翻译的内容存入到csv文件
+        data = pd.DataFrame({'输入':[a],"结果":[result]})
+        data.to_csv("./翻译结果.csv",mode='a',encoding='ANSI',index=False)
