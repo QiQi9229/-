@@ -1,0 +1,45 @@
+import requests
+import pandas as pd
+import json
+
+print("""
+    1-纪录片；2-传记；3-犯罪；4-历史；5-动作；6-情色；7-歌舞；8-儿童；
+    10-悬疑；11-剧情；12-灾难；13-爱情；14-音乐；15-冒险；16-奇幻；17-科幻；
+    18-运动；19-惊悚；20-恐怖；22-战争；23-短篇；24-喜剧；25-动画；26-同性；27-西部；
+    28-家庭；29-武侠；30-古装；31-黑色电影
+""")
+type = input("请输入电影类型序号：")
+number = input("您想看排名前多少的电影：")
+url = "https://movie.douban.com/j/chart/top_list"
+headers = {
+    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 Edg/88.0.705.68"
+}
+params = {
+    'type': type,
+    'interval_id': '100:90',
+    'action': '',
+    'start': '0',
+    'limit': number,
+}
+r = requests.get(url,headers=headers,params=params).text
+# print(r)
+# 将字符串形式转换为字典格式
+dict_list = json.loads(r)
+# 提取电影名称
+title = [i['title'] for i in dict_list]
+# 电影评分
+score = [i['score'] for i in dict_list]
+# 电影类型
+types = [i['types'] for i in dict_list]
+# 电影国家地区
+regions = [i['regions'] for i in dict_list]
+# 电影上映时间
+release_date = [i['release_date'] for i in dict_list]
+# 主演
+actors = [i['actors'] for i in dict_list]
+# 网址
+urls = [i['url'] for i in dict_list]
+
+data = pd.DataFrame({'名称':title,"评分":score,"类型":types,"国家地区":regions,"上映时间":release_date,"主演":actors,"网址":urls})
+data.index += 1
+data.to_excel('./豆瓣电影.xlsx')
