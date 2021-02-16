@@ -1,0 +1,32 @@
+from selenium import webdriver
+import time
+
+driver = webdriver.Chrome()
+driver.get("https://so.gushiwen.cn/user/login.aspx?from=http://so.gushiwen.cn/user/collect.aspx")
+# 定位并输入用户名
+name = driver.find_element_by_id("email")
+# 清空用户名
+name.clear()
+# 输入内容
+name.send_keys('1843100574@qq.com')
+# 定位密码
+passward = driver.find_element_by_id('pwd')
+# 清空密码
+passward.clear()
+# 输入密码
+passward.send_keys('QAQ613209')
+# 输入验证码
+a = input("请输入验证码：")
+# 定位验证码
+yanzheng = driver.find_element_by_id('code')
+yanzheng.clear()
+yanzheng.send_keys(a)
+# 定位登陆按钮
+denglu = driver.find_element_by_id('denglu')
+denglu.click()
+time.sleep(5)
+
+# 关闭当前网页
+driver.close()
+# 关闭整个浏览器
+# driver.quit()
